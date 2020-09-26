@@ -19,14 +19,6 @@ function HamitziApp() {
     const [existingSourdough, setExistingSourDough] = useState(0);
     const [desiredHamitzi, setDesiredHamitzi] = useState(10);
 
-    const onChangeBreadCount = (event) => {
-        setBreadCount(event.target.value);
-    };
-
-    const onChangeSourdough = (event) => {
-      setExistingSourDough(event.target.value);
-    };
-
     const renderFeedSourdoughInstructions = () => {
         if (existingSourdough - 10 > BASIC_RECIPE.sourdough * breadCount) {
             return (
@@ -34,14 +26,16 @@ function HamitziApp() {
             );
         }
 
-        const missingSourdoughAmount = (BASIC_RECIPE.sourdough * breadCount) + desiredHamitzi - existingSourdough;
+        const missingSourdoughAmount = ((BASIC_RECIPE.sourdough * breadCount) + desiredHamitzi) - existingSourdough;
         const feedingAmount = (missingSourdoughAmount / 2).toFixed(2);
         return (
             <>
-                <Label>{`You need to feed your sourdough before you can make ${breadCount} bread loafs.`}</Label>
+                <Label>{`You are missing ${missingSourdoughAmount} g of sourdough.`}</Label>
+                <Label>{`You need to feed your sourdough before you can make ${breadCount} bread loafs (and have a spare Hamitzi of ${desiredHamitzi} g).`}</Label>
+                <br/>
                 <Label>{`Please feed your sourdough with:`}</Label>
-                <Label>{`Please feed your sourdough with ${feedingAmount} g of water`}</Label>
-                <Label>{`and ${feedingAmount} g of plain flour`}</Label>
+                <Label>{`${feedingAmount} g of water`}</Label>
+                <Label>{`${feedingAmount} g of plain flour`}</Label>
                 <Label>{`In order to have enough sourdough for both your bread and your remaining Hamitzi`}</Label>
             </>
         );
@@ -49,27 +43,32 @@ function HamitziApp() {
 
     return (
         <Container>
+            <div>Welcome to the great Hamitzi Calculator!</div>
+            <br/>
             <FormLine>
                 <Label>Desired number of bread loafs:</Label>
                 <Input
                     type="number"
                     min="1"
                     value={breadCount}
-                    onChange={onChangeBreadCount}
+                    onChange={event => setBreadCount(parseInt(event.target.value))}
                 />
             </FormLine>
             <Label>{`(Total weight of loaf is: ${totalWeightOfOneLoaf} g)`}</Label>
+            <br/>
             <Label>{`Whole Spelt flour: ${breadCount * BASIC_RECIPE.wholeSpeltFlour} g`}</Label>
             <Label>{`White bread flour: ${breadCount * BASIC_RECIPE.whileBreadFlour} g`}</Label>
             <Label>{`Sourdough: ${breadCount * BASIC_RECIPE.sourdough} g`}</Label>
             <Label>{`Water: ${breadCount * BASIC_RECIPE.water} g`}</Label>
             <Label>{`Salt: ${breadCount * BASIC_RECIPE.salt} g`}</Label>
+            <br/>
             <FormLine>
                 <Label>Existing sourdough in g:</Label>
                 <Input
                     type="number"
                     value={existingSourdough}
-                    onChange={onChangeSourdough}
+                    onChange={event => setExistingSourDough(parseFloat(event.target.value))}
+                    min={"1"}
                 />
             </FormLine>
             <FormLine>
@@ -77,9 +76,11 @@ function HamitziApp() {
                 <Input
                     type="number"
                     value={desiredHamitzi}
-                    onChange={(event) => {setDesiredHamitzi(event.target.value)}}
+                    onChange={(event) => {setDesiredHamitzi(parseFloat(event.target.value))}}
+                    min={"0"}
                 />
             </FormLine>
+            <br/>
             {renderFeedSourdoughInstructions()}
         </Container>
     );
